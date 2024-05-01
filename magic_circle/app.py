@@ -34,16 +34,20 @@ async def lifespan(_):  # type: ignore
         await repo.circle.first_or_create(
             where=CircleDB.name == "OGCircle", orm=CircleDB(name="OGCircle")
         )
-        for username in ("admin", "admin2"):
-            user = await repo.user.first_or_create(
-                where=UserDB.username == username, username=username, password=username
-            )
-            await repo.user_session.first_or_create(
-                where=UserSessionDB.user_id == user.id,
-                user_id=user.id,
-                user=user,
-                key=username,
-            )
+
+        if config.APP_ENV == "dev":
+            for username in ("admin", "admin2"):
+                user = await repo.user.first_or_create(
+                    where=UserDB.username == username,
+                    username=username,
+                    password=username,
+                )
+                await repo.user_session.first_or_create(
+                    where=UserSessionDB.user_id == user.id,
+                    user_id=user.id,
+                    user=user,
+                    key=username,
+                )
 
         await repo.commit()
 
