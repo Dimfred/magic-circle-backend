@@ -16,7 +16,7 @@ RELEASE_DATE_TAG := $(shell date -u +'%Y-%m-%dT%H-%M-%SZ')
 docker: docker-build docker-push ## build and push the docker image, extra args with DOCKER_ARGS=... (e.g. --no-cache)
 
 docker-push:
-	docker image push $(IMAGE_REGISTRY)/$(IMAGE_NAME):latest
+	docker image push $(IMAGE_REGISTRY)/$(IMAGE_NAME):latest \
 		&& docker image push $(IMAGE_REGISTRY)/$(IMAGE_NAME):$(RELEASE_DATE_TAG)
 
 docker-build: ## build the docker image, extra args with DOCKER_ARGS=... (e.g. --no-cache)
