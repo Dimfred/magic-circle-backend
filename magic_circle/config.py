@@ -12,7 +12,6 @@ class Config(BaseSettings):
     # APP
     APP_ENV: str = APP_ENV
     APP_NAME: str = APP_NAME
-    APP_API_KEY: str = "admin"
 
     APP_DEBUG: bool = True
     APP_LOG_LEVEL: str = "INFO"
@@ -39,7 +38,6 @@ class Config(BaseSettings):
         "expire_on_commit": False,
     }
     REDIS_URL: str = "redis://127.0.0.1:6379"
-    CELERY_WORKER: int = 4
 
     ############################################################################
     # FASTAPI
@@ -52,6 +50,10 @@ class Config(BaseSettings):
 
     def init(self):
         Path(self.APP_CACHE_PATH).mkdir(parents=True, exist_ok=True)
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 
 config = Config()
