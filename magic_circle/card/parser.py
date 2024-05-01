@@ -41,7 +41,7 @@ class ManaboxParser(Parser):
         for _, row in df.iterrows():
             card = self.repo.card.create(
                 orm=CardDB(
-                    name=row["Name"],
+                    name=row["Name"].lower(),
                     foil=row["Foil"] == "foil",
                     quantity=row["Quantity"],
                     language=row["Language"],
@@ -72,7 +72,7 @@ class PlainParser(Parser):
         if isinstance(decklist, bytes):
             decklist = decklist.decode("utf-8")
 
-        return [card.name for card in mtg_parser.decklist.parse_deck(decklist)]
+        return [card.name.lower() for card in mtg_parser.decklist.parse_deck(decklist)]
 
 
 class ParserFactory:
