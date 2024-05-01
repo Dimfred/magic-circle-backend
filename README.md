@@ -72,3 +72,7 @@ make alembic-upgrade-head
 # see further alembic commands
 make help
 ```
+
+## Big thanks!
+
+Big thank you to @Iheyberger for providing [mtg-parser](https://github.com/lheyberger/mtg-parser).
