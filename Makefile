@@ -4,7 +4,7 @@ all: help
 
 ################################################################################
 # PROJECT CONFIG
-PROJECT_NAME := magic_circle
+PROJECT_NAME := magic-circle
 CONTAINER_NAME := backend
 IMAGE_REGISTRY := registry.cojodi.com
 IMAGE_NAME := $(PROJECT_NAME)/$(CONTAINER_NAME)
