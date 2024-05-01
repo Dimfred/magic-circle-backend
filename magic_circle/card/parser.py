@@ -72,6 +72,12 @@ class PlainParser(Parser):
         if isinstance(decklist, bytes):
             decklist = decklist.decode("utf-8")
 
+        decklist = [
+            item.strip() if item[0].isdigit() else f"1 {item.strip()}"
+            for item in decklist.split("\n")
+        ]
+        decklist = "\n".join(decklist)
+
         return [card.name.lower() for card in mtg_parser.decklist.parse_deck(decklist)]
 
 
