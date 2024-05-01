@@ -1,0 +1,126 @@
+[tool.poetry]
+name = "magic-circle-backend"
+version = "0.1.0"
+description = ""
+authors = ["Dmitrij Vinokour <dmitrij.vinokour@cojodi.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "magic_circle_backend"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+fastapi = "^0.110.2"
+pandas = "^2.2.2"
+sqlmodel-repository = {git = "https://github.com/Cojodi/sqlmodel-repository.git", rev = "main"}
+loguru = "^0.7.2"
+mysqlclient = "^2.2.4"
+uvicorn = "^0.29.0"
+pydantic-settings = "^2.2.1"
+tenacity = "^8.2.3"
+alembic = "^1.13.1"
+asyncmy = "^0.2.9"
+python-depends = {git = "https://github.com/Dimfred/depends.git", rev = "main"}
+python-multipart = "^0.0.9"
+pycryptodomex = "^3.20.0"
+httpx = {extras = ["http2"], version = "^0.27.0"}
+pillow = "^10.3.0"
+aioredis-semaphore = {git = "https://github.com/Cojodi/aioredis-semaphore.git", rev = "main"}
+webp = "^0.3.0"
+mtg-parser = "^0.0.1a34"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest-asyncio = "^0.23.6"
+pytest-cov = "^5.0.0"
+aiosqlite = "^0.20.0"
+pytest = "^8.1.1"
+pytest-mock = "^3.14.0"
+pytest-fastapi-deps = "^0.2.3"
+mypy = "^1.9.0"
+ruff = "^0.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+# Minimum supported version
+target-version = "py310"
+line-length = 88
+show-fixes = true
+select = [
+    "F", "E", "W", "C90", "N", "D", "UP", "ANN", "S112", "S110", "BLE", "FBT",
+    "A", "C4", "DTZ", "EM", "EXE", "INP", "PIE", "PYI", "Q", "RSE", "RET",
+    "SIM", "TID", "INT", "ARG", "ERA", "PL", "RUF", "B", "I001", "I002"
+]
+ignore = [
+    "ARG001", # arg is not accessed
+    "A003", # class attr shadowing python builtin
+    "ANN001", # missing function arg annotation
+    "ANN002", # missing *args annotation
+    "ANN003", # missing **kwargs annotation
+    "ANN101", # missing type for self in __init__
+    "ANN201", # public function return type missing
+    "ANN202", # private function timereturn type missing (inner function)
+    "ANN204", # special function return type missing
+    "B008", # no function calls in function params (need this for DDepends)
+    "B010", # ignore setattr
+    "EXE002", # no shbang present
+    "D100", # missing docstring in module
+    "D101", # missing docstring in class
+    "D102", # missing docstring in class method
+    "D103", # missing docstring in function
+    "D104", # missing docstring in public package
+    "D107", # missing docstring in __init__
+    "E501", # line too long (shouldn't matter with formatter)
+    "TID252", # relative imports from parent modules are banned
+    "UP007", # used X | Y for unions
+    "N803", # argument name should be lowercase
+    "EM101", # missing exception type
+    "RUF019", # unencessary key check
+    # "UP007",
+    # "UP037"
+    "PLR0913", # don't use more than 5 args per function
+    "RET504", # unnecessary variable assignment before return
+]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Errors which can be fixed
+fixable = [
+    "I001", # isort unsorted imports
+    "I002", # isort missing imports
+]
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+# fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+unfixable = []
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "tests/",
+]
+
+[tool.ruff.mccabe]
+max-complexity = 15
+
+[tool.mypy]
+ignore_missing_imports = true

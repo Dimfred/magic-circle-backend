@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+
+PROJECT_NAME=magic-circle-backend
+MODULE_NAME=magic_circle # the python module name with the app
+PACKAGE_NAME="@dimfred/magic-circle-backend"
+REPOSITORY="https://github.com/dimfred/magic-circle-backend.git"
+CLIENT_PATH="./$PROJECT_NAME-client"
+
+VERSION=$1
+if [ -z "$VERSION" ]; then
+    echo "Version is required: X.Y.Z-rcA"
+    exit 1
+fi
+
+rm -r ${CLIENT_PATH}/client
+
+# dump openapi.json
+python3 -c "
+import json
+
+from fastapi.openapi.utils import get_openapi
+
+from $MODULE_NAME.app import app
+
+with open('dev-assets/openapi.json', 'w') as f:
+    json.dump(get_openapi(
+        title=app.title,
+        version=app.version,
+        openapi_version=app.openapi_version,
+        description=app.description,
+        routes=app.routes,
+    ), f)
+      " &&
+    npx openapi-generator-cli generate \
+        -i 'dev-assets/openapi.json' \
+        -o $CLIENT_PATH/client \
+        -g typescript-axios
+
+echo "{
+    \"name\": \"${PACKAGE_NAME}\",
+    \"version\": \"${VERSION}\",
+    \"repository\": \"${REPOSITORY}\",
+    \"publishConfig\": {
+        \"registry\": \"https://npm.pkg.github.com\"
+    }
+}" | tee ${CLIENT_PATH}/client/package.json
+cat ${CLIENT_PATH}/client/package.json
