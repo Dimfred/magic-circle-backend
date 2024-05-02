@@ -11,6 +11,8 @@ class CardsGetIn(PaginatedIn):
     usernames: Optional[list[str]]
     decklist: Optional[str]
     decklist_format: Optional[ParserFormat]
+    ignore_owned_cards: bool
+    exact_match: bool
 
     @model_validator(mode="before")
     def validate_decklist(cls, values):
