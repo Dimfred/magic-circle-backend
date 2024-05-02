@@ -77,15 +77,24 @@ async def get_cards(req: CardsGetIn, repo=Repo, user=User):
 
     userdbs = []
     if req.usernames is not None:
-        userdbs = await repo.user.all(
-            where=or_(*(UserDB.username == user for user in req.usernames))
-        )
-        and_clause.append(or_(*(CardDB.owner_id == userdb.id for userdb in userdbs)))
+        if req.ignore_owned_cards:
+            req.usernames.remove(user.username)
+
+        if req.usernames:
+            userdbs = await repo.user.all(
+                where=or_(*(UserDB.username == username for username in req.usernames))
+            )
+            and_clause.append(
+                or_(*(CardDB.owner_id == userdb.id for userdb in userdbs))
+            )
 
     if len(and_clause) > 1:
         query_kwargs["where"] = and_(*and_clause)
     elif len(and_clause) == 1:
         query_kwargs["where"] = and_clause[0]
+
+    if not req.usernames:
+        return []
 
     return await repo.card.all(**query_kwargs)
 
