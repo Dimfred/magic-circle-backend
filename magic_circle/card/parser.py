@@ -1,9 +1,12 @@
 import io
+import random
 from abc import ABC, abstractmethod
 from typing import Literal
 
 import mtg_parser
 import pandas as pd
+from requests import Session
+from requests.adapters import HTTPAdapter, Retry
 
 from ..exceptions import BadRequestError
 from ..repo import Repository
@@ -62,6 +65,34 @@ class ManaboxParser(Parser):
         raise NotImplementedError
 
 
+def make_requests_session():
+    retry = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504],
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+
+    session = Session()
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    session.headers = {
+        "User-Agent": random.choice(
+            [
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.1",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.3",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            ]
+        ),
+    }
+
+    return session
+
+
 class PlainParser(Parser):
     def __init__(self, repo: Repository, user: UserDB):
         super().__init__(repo, user)
@@ -73,12 +104,16 @@ class PlainParser(Parser):
         if isinstance(decklist, bytes):
             decklist = decklist.decode("utf-8")
 
-        decklist = [  # type: ignore
-            item.strip() if item[0].isdigit() else f"1 {item.strip()}"  # type: ignore
-            for item in decklist.split("\n")  # type: ignore
-        ]
-        decklist = "\n".join(decklist)  # type: ignore
-        decklist = mtg_parser.decklist_str.parse_deck(decklist)  # type: ignore
+        if not decklist.startswith("http"):  # type: ignore
+            decklist = [  # type: ignore
+                item.strip() if item[0].isdigit() else f"1 {item.strip()}"  # type: ignore
+                for item in decklist.split("\n")  # type: ignore
+            ]
+            decklist = "\n".join(decklist)  # type: ignore
+            decklist = mtg_parser.parse_deck(decklist)  # type: ignore
+        else:
+            session = make_requests_session()
+            decklist = mtg_parser.parse_deck(decklist, session=session)  # type: ignore
 
         return [card.name.lower() for card in decklist]  # type: ignore
 
