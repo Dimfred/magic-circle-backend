@@ -115,6 +115,9 @@ class PlainParser(Parser):
             session = make_requests_session()
             decklist = mtg_parser.parse_deck(decklist, session=session)  # type: ignore
 
+        if decklist is None:
+            return []
+
         return [card.name.lower() for card in decklist]  # type: ignore
 
 
