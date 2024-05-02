@@ -5,6 +5,7 @@ from typing import Literal
 import mtg_parser
 import pandas as pd
 
+from ..exceptions import BadRequestError
 from ..repo import Repository
 from ..user.db import UserDB
 from .bases import Rarity
@@ -72,13 +73,14 @@ class PlainParser(Parser):
         if isinstance(decklist, bytes):
             decklist = decklist.decode("utf-8")
 
-        decklist = [
-            item.strip() if item[0].isdigit() else f"1 {item.strip()}"
-            for item in decklist.split("\n")
+        decklist = [  # type: ignore
+            item.strip() if item[0].isdigit() else f"1 {item.strip()}"  # type: ignore
+            for item in decklist.split("\n")  # type: ignore
         ]
-        decklist = "\n".join(decklist)
+        decklist = "\n".join(decklist)  # type: ignore
+        decklist = mtg_parser.decklist_str.parse_deck(decklist)  # type: ignore
 
-        return [card.name.lower() for card in mtg_parser.decklist.parse_deck(decklist)]
+        return [card.name.lower() for card in decklist]  # type: ignore
 
 
 class ParserFactory:
