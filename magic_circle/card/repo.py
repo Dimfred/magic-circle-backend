@@ -17,7 +17,6 @@ class CardRepo(AsyncRepository[CardDB]):
         self, card_names: list[str], owner_id: int, *, exact_name: bool
     ):
         """Show all cards that another user owns, but not the user who queries."""
-
         return or_(
             *(
                 and_(

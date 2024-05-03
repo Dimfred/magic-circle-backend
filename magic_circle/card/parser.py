@@ -108,6 +108,7 @@ class PlainParser(Parser):
             decklist = [  # type: ignore
                 item.strip() if item[0].isdigit() else f"1 {item.strip()}"  # type: ignore
                 for item in decklist.split("\n")  # type: ignore
+                if item
             ]
             decklist = "\n".join(decklist)  # type: ignore
             decklist = mtg_parser.parse_deck(decklist)  # type: ignore

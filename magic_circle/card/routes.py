@@ -77,7 +77,7 @@ async def get_cards(req: CardsGetIn, repo=Repo, user=User):
 
     userdbs = []
     if req.usernames is not None:
-        if req.ignore_owned_cards:
+        if req.ignore_owned_cards and user.username in req.usernames:
             req.usernames.remove(user.username)
 
         if req.usernames:
