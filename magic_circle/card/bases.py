@@ -8,6 +8,7 @@ class Rarity(Enum):
     uncommon = "uncommon"
     rare = "rare"
     mythic = "mythic"
+    special = "special"
 
 
 class CardBase(SQLModel):
