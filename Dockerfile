@@ -1,4 +1,4 @@
-FROM python:3.11 as builder
+FROM python:3.11 AS builder
 
 ################################################################################
 # PYTHON INIT
@@ -37,7 +37,7 @@ RUN --mount=type=ssh \
 
 ################################################################################
 # APP
-FROM python:3.11-slim as runner
+FROM python:3.11-slim AS runner
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
